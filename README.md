@@ -9,53 +9,92 @@ Se debe tener en consideración lo siguiente:
 
 ---
 
-## **1. Pasos previos**
-Para realizar la descarga de los packages necesarios en la instalación, se debe contar con un equipo con RHEL 6/CentOS 6 instalado y con acceso a internet, para así garantizar que la descarga de los packages RPM se realicen desde los repositorios oficiales de RedHat. 
+## **Pasos previos**
+- Descarga de fuentes TrueType y ClearType: \
+  Las fuentes se descargaron siguiendo el manual: http://mscorefonts2.sourceforge.net
 
-En las pruebas, el equipo con acceso a internet tiene acceso a los siguientes repositorios: 
+- Descarga de paquetes RPM: \
+  Los paquetes RPM se descargaron del repositorio oficial de paquetes de RedHat: https://access.redhat.com/downloads/content/69/ver=/rhel---6/6.10/x86_64/packages 
 
-![Yum repolist](images/yum-repolist.png)
+  Los packages descargados son:
+  - fontconfig
+  - freetype
 
-Se procede a descargar los packages RPM con el siguiente comando: 
-```console
-yum install --downloadonly --downloaddir=/tmp -y fontconfig
-```
-> Notas:\
-> - El comando mostrado descargará el package `fontconfig` con sus respectivas dependencias. Esto es importante para los pasos posteriores.
-> - Para la prueba, se está configurando que los packages a descargar se guarden en la carpeta `/tmp`.
+## **Instalación de paquetes RPM y fuentes**
 
-![Yum download](images/yum-download.png)
+1. Instalación de paquetes RPM: \
+    Copie la carpeta con los paquetes RPM proporcionados (`resources/rpm`) a la carpeta `/tmp`. Después, a través de la terminal debe estar ubicado en la carpeta en la que copió los archivos para la instalación.
+    \
+    \
+    ![check copy rpm packages](images/01_copy_rpm_packages.png)
 
-Se ingresa a la carpeta `/tmp` y se verifica que los packages han sido descargados: 
-
-![Yum download success](images/yum-download-success.png)
-
-> Nota:\
-> En caso no cuente con un equipo con salida a internet, se está proporcionando los archivos descargados en la carpeta `resources/rpm/` de este manual. Copie los archivos al servidor que desea instalar los packages, en la carpeta de su preferencia. 
-
----
-## **2. Instalación de packages RPM**
-
-Copie los archivos descargados en el paso previo en la carpeta de su preferencia (Para realizar el manual, se está copiando los archivos en la carpeta `/tmp/`). A través de la terminal, debe estar ubicado en la carpeta en la que copió los archivos para la instalación. 
-
-Los archivos descargados se instalan con el siguiente comando: 
-```console
-rpm -ivh <nombre archivo rpm>
-```
-
-Se procede a instalar los packages en el siguiente orden: 
-
-#### **Instalación de fontconfig y dependencias:**
-
-- Instalación de dependencias:
+    Los archivos descargados se instalan con el siguiente comando: 
     ```console
-    rpm -ivh freetype-2.3.11-17.el6.x86_64.rpm
-    ```
-- Instalación de **fontconfig**:
-    ```console
-    rpm -ivh fontconfig-2.8.0-5.el6.x86_64.rpm
+    rpm -ivh <nombre archivo rpm>
     ```
 
-> Nota:\
-> En caso no se realice la instalación previa de las dependencias, es posible que salga el siguiente mensaje de error: 
-> ![yum-install-error](images/yum-error-install-without-dependencies.png)
+    Se procede a instalar los packages en el siguiente orden: 
+
+    #### **Instalación de fontconfig y dependencias:**
+
+    - Instalación de dependencias:
+        ```console
+        rpm -ivh freetype-2.3.11-17.el6.x86_64.rpm
+        ```
+    - Instalación de **fontconfig**:
+        ```console
+        rpm -ivh fontconfig-2.8.0-5.el6.x86_64.rpm
+        ```
+
+    > Nota:\
+    > En caso no se realice la instalación previa de las dependencias, es posible que salga el siguiente mensaje de error: 
+    \
+    \
+    > ![error install without dependencies](images/02_error_install_without_dependencies.png)
+
+    Puede verificar si el package fue instalado con el siguiente comando: 
+    ```console
+    yum list installed 'fontconfig'
+    ```
+    ![check successful install](images/03_check_successful_install.png)
+
+2. Instalación de fuentes descargadas: \
+    Copie las fuentes descargadas (Se encuentran en la carpeta `resources/fonts`) a la carpeta `/tmp`. 
+
+    Copie la carpeta `msttcorefonts` a la siguiente ruta: `/usr/share/fonts`
+    ```console
+    cp -R /tmp/msttcorefonts/ /usr/share/fonts/
+    ```
+    ![check fonts copy](images/04_check_font_copy.png)
+
+    Refresque la caché del fontconfig con el siguiente comando: 
+    ```console
+    fc-cache -f -v
+    ```
+    ![refresh fontconfig cache](images/05_refresh_fc_cache.png)
+
+    Puede verificar si las fuentes están instaladas con el siguiente comando: 
+    ```console
+    fc-list
+    ```
+    ![check fonts installed](images/06_check_fonts_installed.png)
+
+    > Nota: \
+    > Estos pasos también aplican para otras fuentes TTF.
+
+## **Pruebas con cartas**
+
+- Se verifica que una de las cartas esté con una fuente instalada (Ejm: Calibri) y se copia al servidor de desarrollo. \
+  ![check document fonts](images/07_test_check_document_font.png)
+
+- Se creó una REST API demo con Spring Boot para las pruebas con cartas, y se procede a ejecutar el servicio con Postman.
+  \
+  ![test rest api](images/08_test_rest_api.png)
+
+
+  > Nota: \
+  > El servicio demo tiene la funcionalidad de lectura de archivos Word y generación de PDF tal cual está en SigeServices. Se proporciona el proyecto demo para su verificación. (`demos/cartasdemo.zip`)
+
+- Se verifica en las propiedades del PDF que tiene la fuente embebida. 
+  \
+  ![check embedded font](images/09_check_embedded_font.png)
