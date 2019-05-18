@@ -5,7 +5,8 @@ En el siguiente manual se detallarán los pasos a realizar para la instalación 
 Se debe tener en consideración lo siguiente: 
 - La instalación de packages necesarios se realizará de manera offline, ya que los servidores de aplicación de Mibanco (Desarrollo, QA, Producción) no cuentan con acceso a Internet. 
 - No se especificó la versión exacta de RHEL instalado, por lo que se asume que se tiene la versión 6.10 (Dicha versión se usará en las pruebas de instalación de fuentes).
-- El servidor debe tener previamente instalado Oracle JDK 8 y JBoss EAP 6.x para las pruebas con los servicios de generación de cartas con plantillas de Microsoft Word. 
+- El servidor debe tener previamente instalado Oracle JDK 8 y JBoss EAP 6.x para las pruebas con los servicios de generación de cartas con plantillas de Microsoft Word.
+- **Todo el proceso de instalación de paquetes y fuentes se realizará con un usuario root**. 
 
 ---
 
